@@ -1,4 +1,4 @@
-def registry = 'https://valaxy12.jfrog.io'
+   def registry = 'https://valaxy12.jfrog.io'
 pipeline {
     agent {
         label 'maven'
@@ -16,17 +16,18 @@ environment{
         }
     }
 
-         stage("Jar Publish") {
+ 
+      stage("Jar Publish") {
         steps {
             script {
                     echo '<--------------- Jar Publish Started --------------->'
-                     def server = Artifactory.newServer url:registry+"/artifactory" ,  credentialsId:"artifactory_token"
+                     def server = Artifactory.newServer url:registry+"/artifactory" ,  credentialsId:" artifact-cread"
                      def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
                      def uploadSpec = """{
                           "files": [
                             {
                               "pattern": "jarstaging/(*)",
-                              "target": "libs-release-local/{1}",
+                              "target": "jfrog-maven-example/{1}",
                               "flat": "false",
                               "props" : "${properties}",
                               "exclusions": [ "*.sha1", "*.md5"]
@@ -37,8 +38,10 @@ environment{
                      buildInfo.env.collect()
                      server.publishBuildInfo(buildInfo)
                      echo '<--------------- Jar Publish Ended --------------->'  
-            
             }
         }   
+    }   
+    
+ 
     }   
 }
